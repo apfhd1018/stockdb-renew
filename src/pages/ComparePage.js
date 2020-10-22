@@ -35,10 +35,6 @@ const ComparePage = () => {
 		minPrice: 0,
 	});
 
-	// 테스트
-	let initialTest = [{ first: "first" }, { second: "second" }];
-	const [test, setTest] = useState(initialTest);
-
 	// 라디오 버튼 Value 지정값
 	const [radio, setRadio] = useState("close");
 
@@ -154,7 +150,7 @@ const ComparePage = () => {
 					lineSeries={lineSeries}
 					barSeries={barSeries}
 					title={title}
-					legent={legend}
+					legend={legend}
 				/>
 			</div>
 		</div>

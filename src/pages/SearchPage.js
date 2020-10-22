@@ -98,7 +98,7 @@ const SearchPage = () => {
 					barSeries={barSeries}
 					lineSeries={lineSeries}
 					title={title}
-					legent={legend}
+					legend={legend}
 				/>
 			</div>
 		</div>
