@@ -2,13 +2,13 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const Date = ({ startDate, setStartDate, endDate, setEndDate }) => {
+const Date = ({ startDate, onStartDateChange, endDate, onEndDateChange }) => {
 	return (
 		<div className="pickDate">
 			<h3>조회 날짜 : </h3>
 			<DatePicker
 				selected={startDate}
-				onChange={(date) => setStartDate(date)}
+				onChange={(date) => onStartDateChange(date)}
 				dateFormat="yyyy-MM-dd"
 				// maxDate={new Date()}
 				filterDate={(date) => date.getDay() !== 6 && date.getDay() !== 0}
@@ -17,7 +17,7 @@ const Date = ({ startDate, setStartDate, endDate, setEndDate }) => {
 			~
 			<DatePicker
 				selected={endDate}
-				onChange={(date) => setEndDate(date)}
+				onChange={(date) => onEndDateChange(date)}
 				dateFormat="yyyy-MM-dd"
 				// maxDate={new Date()}
 				filterDate={(date) => date.getDay() !== 6 && date.getDay() !== 0}

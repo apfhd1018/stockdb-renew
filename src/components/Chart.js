@@ -1,12 +1,21 @@
 import React from "react";
 import ReactEcharts from "echarts-for-react";
 
-const Chart = ({ stockInfo, min, lineSeries, barSeries, title, legend }) => {
+const Chart = ({
+	stockInfo,
+	onYAxisMinVal,
+	lineSeries,
+	barSeries,
+	title,
+	legend,
+}) => {
 	return (
 		<div>
 			<ReactEcharts
 				option={{
-					title: title,
+					title: {
+						text: title,
+					},
 					tooltip: {
 						trigger: "axis",
 					},
@@ -16,7 +25,7 @@ const Chart = ({ stockInfo, min, lineSeries, barSeries, title, legend }) => {
 					},
 					yAxis: {
 						type: "value",
-						min: min,
+						min: onYAxisMinVal,
 					},
 					legend: {
 						data: legend,
@@ -38,7 +47,7 @@ const Chart = ({ stockInfo, min, lineSeries, barSeries, title, legend }) => {
 					},
 					yAxis: {
 						type: "value",
-						min: min,
+						// min: min,
 					},
 					legend: {
 						data: legend,

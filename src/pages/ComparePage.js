@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import Date from "../components/Date";
 import TitleSearch from "../components/TitleSearch";
-import { eventAxios } from "../Util";
+import { fetchStockInfo } from "../Util";
 import Chart from "../components/Chart";
 import Radio from "../components/Radio";
+import { API_KEY } from "../Config";
 
 const ComparePage = () => {
 	const [startDate, setStartDate] = useState("");
 	const [endDate, setEndDate] = useState("");
 	// 종목 이름값 저장 변수
-	const [inputValue, setInputValue] = useState({
+	const [stockName, setStockName] = useState({
 		first: "",
 		second: "",
 	});
@@ -41,11 +42,11 @@ const ComparePage = () => {
 	// 종목 이름 값 onChange
 	const handleFirstInputChange = (e) => {
 		const target = e.target.value;
-		setInputValue({ ...inputValue, first: target });
+		setStockName({ ...stockName, first: target });
 	};
 	const handleSecondInputChange = (e) => {
 		const target = e.target.value;
-		setInputValue({ ...inputValue, second: target });
+		setStockName({ ...stockName, second: target });
 	};
 
 	// Echarts에서 사용할 X축 데이터 선정함수
@@ -73,48 +74,62 @@ const ComparePage = () => {
 	};
 
 	// 그래프 y축 최소값 선정
-	const min = () => {
+	const handleYAxisMinVal = useCallback(() => {
 		return +stockInfoFirst.minPrice > +stockInfoSecond.minPrice
 			? stockInfoSecond.minPrice
 			: stockInfoFirst.minPrice;
-	};
+	}, [stockInfoFirst, stockInfoSecond, radio]);
 
-	const lineSeries = [
-		{
-			name: stockInfoFirst.title,
-			data: selectFirstPrice(),
-			type: "line",
-		},
-		{
-			name: stockInfoSecond.title,
-			data: selectSecondPrice(),
-			type: "line",
-		},
-	];
-	const barSeries = [
-		{
-			name: stockInfoFirst.title,
-			data: stockInfoFirst.volume,
-			type: "bar",
-		},
-		{
-			name: stockInfoSecond.title,
-			data: stockInfoSecond.volume,
-			type: "bar",
-		},
-	];
-	const title = {
-		text: `${stockInfoFirst.title.toUpperCase()}, ${stockInfoSecond.title.toUpperCase()}`,
-	};
-	const legend = [`${stockInfoFirst.title}`, `${stockInfoSecond.title}`];
+	// Line그래프 x축 데이터
+	const lineSeries = useMemo(
+		() => [
+			{
+				name: stockInfoFirst.title,
+				data: selectFirstPrice(),
+				type: "line",
+			},
+			{
+				name: stockInfoSecond.title,
+				data: selectSecondPrice(),
+				type: "line",
+			},
+		],
+		[stockInfoFirst, stockInfoSecond, radio]
+	);
+	// Bar그래프 x축 데이터
+	const barSeries = useMemo(
+		() => [
+			{
+				name: stockInfoFirst.title,
+				data: stockInfoFirst.volume,
+				type: "bar",
+			},
+			{
+				name: stockInfoSecond.title,
+				data: stockInfoSecond.volume,
+				type: "bar",
+			},
+		],
+		[stockInfoFirst, stockInfoSecond]
+	);
+	// 그래프 종목 이름
+	const title = useMemo(
+		() =>
+			`${stockInfoFirst.title.toUpperCase()}, ${stockInfoSecond.title.toUpperCase()}`,
+		[stockInfoFirst, stockInfoSecond]
+	);
+	// 그래프에 나타나는 종목 Toggle 버튼
+	const legend = useMemo(
+		() => [`${stockInfoFirst.title}`, `${stockInfoSecond.title}`],
+		[stockInfoFirst, stockInfoSecond]
+	);
 
 	// 버튼 클릭시 API 호출 함수 실행
-	const submit = () => {
-		const API_KEY = "HYMUUQAJ14PK7WTL";
-		let API_Call_First = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${inputValue.first}&outputsize=full&apikey=${API_KEY}`;
-		let API_Call_Second = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${inputValue.second}&outputsize=full&apikey=${API_KEY}`;
-		eventAxios(API_Call_First, startDate, endDate, setStockInfoFirst);
-		eventAxios(API_Call_Second, startDate, endDate, setStockInfoSecond);
+	const handleSubmit = () => {
+		let firstApiUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stockName.first}&outputsize=full&apikey=${API_KEY}`;
+		let secondApiUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stockName.second}&outputsize=full&apikey=${API_KEY}`;
+		fetchStockInfo(firstApiUrl, startDate, endDate, setStockInfoFirst);
+		fetchStockInfo(secondApiUrl, startDate, endDate, setStockInfoSecond);
 	};
 
 	// #### 렌더링
@@ -123,30 +138,30 @@ const ComparePage = () => {
 			<h2 style={{ color: "red" }}>2개 종목 검색</h2>
 			<Date
 				startDate={startDate}
-				setStartDate={setStartDate}
+				onStartDateChange={setStartDate}
 				endDate={endDate}
-				setEndDate={setEndDate}
+				onEndDateChange={setEndDate}
 			/>
 			<div className="searchName">
 				<h3>종목 이름 : </h3>
 				<TitleSearch
-					inputValue={inputValue.first}
+					stockName={stockName.first}
 					inputTarget={handleFirstInputChange}
-					submit={submit}
+					onSubmit={handleSubmit}
 				/>
 				<TitleSearch
-					inputValue={inputValue.second}
+					stockName={stockName.second}
 					inputTarget={handleSecondInputChange}
-					submit={submit}
+					onSubmit={handleSubmit}
 				/>
 
-				<button onClick={submit}>search</button>
+				<button onClick={handleSubmit}>search</button>
 			</div>
-			<Radio radio={radio} setRadio={setRadio} />
+			<Radio radio={radio} onRadioChange={setRadio} />
 			<div>
 				<Chart
 					stockInfo={stockInfoFirst}
-					min={min}
+					onYAxisMinVal={handleYAxisMinVal}
 					lineSeries={lineSeries}
 					barSeries={barSeries}
 					title={title}

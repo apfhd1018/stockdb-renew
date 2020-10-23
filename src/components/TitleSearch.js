@@ -1,15 +1,15 @@
 import React from "react";
 
-const TitleSearch = ({ inputValue, inputTarget, submit }) => {
+const TitleSearch = ({ stockName, onInputChange, onSubmit }) => {
 	return (
 		<div className="search">
 			<input
 				type="text"
-				value={inputValue}
-				onChange={inputTarget}
+				value={stockName}
+				onChange={onInputChange}
 				onKeyPress={(e) => {
 					if (e.key === "Enter") {
-						submit();
+						onSubmit();
 					}
 				}}
 				placeholder="ex)qcom, tsla, wmt..."

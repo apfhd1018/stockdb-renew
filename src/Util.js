@@ -11,7 +11,12 @@ const getFormatDate = (date) => {
 };
 
 //  ### API 호출
-const eventAxios = (API, startDate, endDate, setStockInfo) => {
+export const fetchStockInfo = (
+	API,
+	startDate,
+	endDate,
+	onStockInfoResponse
+) => {
 	const xValuesFunction = []; // 날짜
 	const yValuesClosePrice = []; // 종가
 	const yValuesHighPrice = []; // 고가
@@ -72,8 +77,7 @@ const eventAxios = (API, startDate, endDate, setStockInfo) => {
 					title: data["Meta Data"]["2. Symbol"],
 					minPrice: minArrClosePrice,
 				};
-				setStockInfo(newStockInfo);
-				console.log("data : ", data);
+				onStockInfoResponse(newStockInfo);
 			}
 		})
 		.catch((err) => {
@@ -81,4 +85,4 @@ const eventAxios = (API, startDate, endDate, setStockInfo) => {
 			console.log(err);
 		});
 };
-export { getFormatDate, eventAxios };
+// export { getFormatDate, eventAxios };

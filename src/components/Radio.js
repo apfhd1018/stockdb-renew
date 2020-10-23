@@ -1,6 +1,6 @@
 import React from "react";
 
-const Radio = ({ radio, setRadio }) => {
+const Radio = ({ radio, onRadioChange }) => {
 	return (
 		<div className="radio">
 			<label>종가</label>
@@ -10,7 +10,7 @@ const Radio = ({ radio, setRadio }) => {
 				value="close"
 				checked={radio === "close"}
 				onChange={(e) => {
-					setRadio(e.target.value);
+					onRadioChange(e.target.value);
 				}}
 			/>
 			<label>시가</label>
@@ -20,7 +20,7 @@ const Radio = ({ radio, setRadio }) => {
 				value="open"
 				checked={radio === "open"}
 				onChange={(e) => {
-					setRadio(e.target.value);
+					onRadioChange(e.target.value);
 				}}
 			/>
 			<label>고가</label>
@@ -30,7 +30,7 @@ const Radio = ({ radio, setRadio }) => {
 				value="high"
 				checked={radio === "high"}
 				onChange={(e) => {
-					setRadio(e.target.value);
+					onRadioChange(e.target.value);
 				}}
 			/>
 			<label>저가</label>
@@ -40,7 +40,7 @@ const Radio = ({ radio, setRadio }) => {
 				value="low"
 				checked={radio === "low"}
 				onChange={(e) => {
-					setRadio(e.target.value);
+					onRadioChange(e.target.value);
 				}}
 			/>
 		</div>
